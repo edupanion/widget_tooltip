@@ -68,7 +68,7 @@ class TooltipController extends ChangeNotifier {
 }
 
 class WidgetTooltip extends StatefulWidget {
-  const WidgetTooltip({
+  WidgetTooltip({
     super.key,
     required this.message,
     required this.child,
@@ -79,11 +79,8 @@ class WidgetTooltip extends StatefulWidget {
     this.onShow,
     this.onDismiss,
     this.controller,
-    this.messagePadding =
-        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-    this.messageDecoration = const BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.all(Radius.circular(8))),
+    this.messagePadding = const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+    this.messageDecoration = const BoxDecoration(color: Colors.black, borderRadius: BorderRadius.all(Radius.circular(8))),
     this.messageStyle = const TextStyle(color: Colors.white, fontSize: 14),
     this.padding = const EdgeInsets.all(16),
     this.axis = Axis.vertical,
@@ -93,8 +90,8 @@ class WidgetTooltip extends StatefulWidget {
     this.direction,
   })  : assert(targetPadding >= 0, 'targetPadding must be non-negative'),
         assert(triangleRadius >= 0, 'triangleRadius must be non-negative'),
-        assert(triangleSize.width > 0, 'triangleSize width must be positive'),
-        assert(triangleSize.height > 0, 'triangleSize height must be positive');
+        assert(triangleSize.width > 0.0, 'triangleSize width must be positive'),
+        assert(triangleSize.height > 0.0, 'triangleSize height must be positive');
 
   /// Message
   final Widget message;
@@ -154,8 +151,7 @@ class WidgetTooltip extends StatefulWidget {
   State<WidgetTooltip> createState() => _WidgetTooltipState();
 }
 
-class _WidgetTooltipState extends State<WidgetTooltip>
-    with SingleTickerProviderStateMixin {
+class _WidgetTooltipState extends State<WidgetTooltip> with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   late final Animation<double> _animation;
   late final TooltipController _controller;
@@ -169,10 +165,8 @@ class _WidgetTooltipState extends State<WidgetTooltip>
 
   @override
   void initState() {
-    _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300));
-    _animation =
-        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _animation = CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
 
     _controller = widget.controller ?? TooltipController();
     _controller.addListener(listener);
@@ -282,8 +276,7 @@ class _WidgetTooltipState extends State<WidgetTooltip>
     Overlay.of(context).insert(_overlayEntry!);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final messageBoxRenderBox =
-          messageBoxKey.currentContext?.findRenderObject() as RenderBox?;
+      final messageBoxRenderBox = messageBoxKey.currentContext?.findRenderObject() as RenderBox?;
       final messageBoxSize = messageBoxRenderBox?.size;
 
       _overlayEntry?.remove();
@@ -323,24 +316,14 @@ class _WidgetTooltipState extends State<WidgetTooltip>
       };
 
       final Offset messageBoxOffset = switch (builder.targetAnchor) {
-        Alignment.bottomCenter when widget.offsetIgnore =>
-          Offset(0, widget.triangleSize.height + (widget.targetPadding) - 1),
-        Alignment.topCenter when widget.offsetIgnore =>
-          Offset(0, -widget.triangleSize.height - (widget.targetPadding) + 1),
-        Alignment.centerLeft when widget.offsetIgnore =>
-          Offset(-(widget.targetPadding) - widget.triangleSize.width + 1, 0),
-        Alignment.centerRight when widget.offsetIgnore =>
-          Offset((widget.targetPadding) + widget.triangleSize.width - 1, 0),
-        Alignment.bottomCenter => Offset(builder.offset.dx,
-            widget.triangleSize.height + (widget.targetPadding) - 1),
-        Alignment.topCenter => Offset(builder.offset.dx,
-            -widget.triangleSize.height - (widget.targetPadding) + 1),
-        Alignment.centerLeft => Offset(
-            -(widget.targetPadding) - widget.triangleSize.width + 1,
-            builder.offset.dy),
-        Alignment.centerRight => Offset(
-            (widget.targetPadding) + widget.triangleSize.width - 1,
-            builder.offset.dy),
+        Alignment.bottomCenter when widget.offsetIgnore => Offset(0, widget.triangleSize.height + (widget.targetPadding) - 1),
+        Alignment.topCenter when widget.offsetIgnore => Offset(0, -widget.triangleSize.height - (widget.targetPadding) + 1),
+        Alignment.centerLeft when widget.offsetIgnore => Offset(-(widget.targetPadding) - widget.triangleSize.width + 1, 0),
+        Alignment.centerRight when widget.offsetIgnore => Offset((widget.targetPadding) + widget.triangleSize.width - 1, 0),
+        Alignment.bottomCenter => Offset(builder.offset.dx, widget.triangleSize.height + (widget.targetPadding) - 1),
+        Alignment.topCenter => Offset(builder.offset.dx, -widget.triangleSize.height - (widget.targetPadding) + 1),
+        Alignment.centerLeft => Offset(-(widget.targetPadding) - widget.triangleSize.width + 1, builder.offset.dy),
+        Alignment.centerRight => Offset((widget.targetPadding) + widget.triangleSize.width - 1, builder.offset.dy),
         _ => Offset.zero,
       };
 
@@ -413,8 +396,7 @@ class _WidgetTooltipState extends State<WidgetTooltip>
   /// - targetAnchor: The anchor point on the target widget
   /// - followerAnchor: The anchor point on the tooltip
   /// - offset: Additional offset to prevent edge overflow
-  ({Alignment targetAnchor, Alignment followerAnchor, Offset offset})? _builder(
-      Size messageBoxSize) {
+  ({Alignment targetAnchor, Alignment followerAnchor, Offset offset})? _builder(Size messageBoxSize) {
     final renderBox = key.currentContext?.findRenderObject() as RenderBox?;
 
     if (renderBox == null) {
@@ -424,9 +406,7 @@ class _WidgetTooltipState extends State<WidgetTooltip>
     // Calculate target widget metrics
     final targetSize = renderBox.size;
     final targetPosition = renderBox.localToGlobal(Offset.zero);
-    final targetCenterPosition = Offset(
-        targetPosition.dx + targetSize.width / 2,
-        targetPosition.dy + targetSize.height / 2);
+    final targetCenterPosition = Offset(targetPosition.dx + targetSize.width / 2, targetPosition.dy + targetSize.height / 2);
 
     final bool isLeft = switch (widget.direction) {
       WidgetTooltipDirection.left => false,
@@ -473,8 +453,7 @@ class _WidgetTooltipState extends State<WidgetTooltip>
     final double overflowWidth = (messageBoxSize.width - targetSize.width) / 2;
 
     final edgeFromLeft = targetPosition.dx - overflowWidth;
-    final edgeFromRight = MediaQuery.of(context).size.width -
-        (targetPosition.dx + targetSize.width + overflowWidth);
+    final edgeFromRight = MediaQuery.of(context).size.width - (targetPosition.dx + targetSize.width + overflowWidth);
     final edgeFromHorizontal = min(edgeFromLeft, edgeFromRight);
 
     // Adjust horizontal position to prevent edge overflow
@@ -489,12 +468,10 @@ class _WidgetTooltipState extends State<WidgetTooltip>
     }
 
     // Calculate vertical overflow and edge distances
-    final double overflowHeight =
-        (messageBoxSize.height - targetSize.height) / 2;
+    final double overflowHeight = (messageBoxSize.height - targetSize.height) / 2;
 
     final edgeFromTop = targetPosition.dy - overflowHeight;
-    final edgeFromBottom = MediaQuery.of(context).size.height -
-        (targetPosition.dy + targetSize.height + overflowHeight);
+    final edgeFromBottom = MediaQuery.of(context).size.height - (targetPosition.dy + targetSize.height + overflowHeight);
     final edgeFromVertical = min(edgeFromTop, edgeFromBottom);
 
     // Adjust vertical position to prevent edge overflow
@@ -502,13 +479,9 @@ class _WidgetTooltipState extends State<WidgetTooltip>
 
     if (edgeFromVertical < widget.padding.vertical / 2) {
       if (isTop) {
-        dy = MediaQuery.of(context).padding.top +
-            (widget.padding.vertical / 2) -
-            edgeFromVertical;
+        dy = MediaQuery.of(context).padding.top + (widget.padding.vertical / 2) - edgeFromVertical;
       } else if (isBottom) {
-        dy = MediaQuery.of(context).padding.bottom -
-            (widget.padding.vertical / 2) +
-            edgeFromVertical;
+        dy = MediaQuery.of(context).padding.bottom - (widget.padding.vertical / 2) + edgeFromVertical;
       }
     }
 
